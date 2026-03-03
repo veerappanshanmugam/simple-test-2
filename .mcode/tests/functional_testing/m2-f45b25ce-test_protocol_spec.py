@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests commands and captures outputs (no expected_stdout/stderr)
 2. DST Contract Validation: Tests commands and validates outputs match expected
 
-Generated at: 2026-03-03T09:22:45.575788+00:00
+Generated at: 2026-03-03T09:23:58.388480+00:00
 Project: simple-test-2
 Milestone: 2
 """
@@ -387,7 +387,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "subcommand": "",
         "args": [
             "-c",
-            "import data_analyzer; ds = data_analyzer.DataSet('test'); ds.add_data_point(1.0); try:\n ds.detect_outliers('invalid')\n print('no_error')\nexcept ValueError:\n print('ValueError_raised')"
+            "import data_analyzer\nds = data_analyzer.DataSet('test')\nds.add_data_point(1.0)\ntry:\n ds.detect_outliers('invalid')\n print('no_error')\nexcept ValueError:\n print('ValueError_raised')"
         ],
         "expected_exit_code": 0,
         "expected_stdout": "ValueError_raised",

@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests commands and captures outputs (no expected_stdout/stderr)
 2. DST Contract Validation: Tests commands and validates outputs match expected
 
-Generated at: 2026-03-03T09:15:31.481760+00:00
+Generated at: 2026-03-03T09:24:40.498193+00:00
 Project: simple-test-2
 Milestone: 1
 """
@@ -52,32 +52,13 @@ def resolve_env_placeholders(obj: Any) -> Any:
 # that the agent may have substituted for detected secrets.
 TEST_CASES = resolve_env_placeholders(json.loads(r'''[
     {
-        "name": "test_help_output",
-        "category": "HELP_OUTPUT",
-        "description": "Verify --help prints usage information and exits",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--help"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": "Usage:",
-        "expected_stderr": null,
-        "timeout_seconds": 10
-    },
-    {
         "name": "test_no_args_shows_menu",
         "category": "HAPPY_PATH",
-        "description": "Running with no arguments shows the interactive top-level menu (Calculator, Analyzer, Exit)",
-        "command": "java",
+        "description": "Running the calculator shows the welcome message and interactive menu",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar"
-        ],
-        "stdin": "3\n",
+        "args": [],
+        "stdin": "0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Calculator",
         "expected_stderr": null,
@@ -87,13 +68,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_addition",
         "category": "HAPPY_PATH",
         "description": "Calculator addition: 5 + 3 = 8",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n5 3\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 8",
@@ -104,13 +81,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_subtraction",
         "category": "HAPPY_PATH",
         "description": "Calculator subtraction: 10 - 4 = 6",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "2\n10 4\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 6",
@@ -121,13 +94,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_multiplication",
         "category": "HAPPY_PATH",
         "description": "Calculator multiplication: 6 * 7 = 42",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "3\n6 7\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 42",
@@ -138,13 +107,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_division",
         "category": "HAPPY_PATH",
         "description": "Calculator division: 15 / 3 = 5",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "4\n15 3\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 5",
@@ -155,13 +120,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_power",
         "category": "HAPPY_PATH",
         "description": "Calculator power: 2^10 = 1024",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "5\n2 10\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 1024",
@@ -172,13 +133,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_square_root",
         "category": "HAPPY_PATH",
         "description": "Calculator square root: sqrt(144) = 12",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "6\n144\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 12",
@@ -189,13 +146,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_mean",
         "category": "HAPPY_PATH",
         "description": "Calculator mean of [10, 20, 30] = 20",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "7\n3\n10 20 30\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Mean: 20",
@@ -206,13 +159,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_max_min",
         "category": "HAPPY_PATH",
         "description": "Calculator find max and min of [5, 2, 8, 1]: max=8, min=1",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "8\n4\n5 2 8 1\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Max: 8",
@@ -223,13 +172,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_show_history",
         "category": "HAPPY_PATH",
         "description": "Perform an addition then show history; history should contain the result",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n5 3\n9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Calculation History:",
@@ -240,13 +185,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_clear_history",
         "category": "HAPPY_PATH",
         "description": "Perform an operation, clear history, then verify history is empty",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n5 3\n10\n9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "History cleared.",
@@ -256,14 +197,10 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
     {
         "name": "test_calculator_exit_immediately",
         "category": "HAPPY_PATH",
-        "description": "Enter calculator mode and immediately exit with choice 0",
-        "command": "java",
+        "description": "Enter calculator and immediately exit with choice 0",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Thank you",
@@ -274,13 +211,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_calculator_multiple_operations",
         "category": "HAPPY_PATH",
         "description": "Chain multiple operations: add 2+3=5, multiply 4*5=20, then show history with both results",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n2 3\n3\n4 5\n9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 5",
@@ -291,13 +224,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_division_by_zero",
         "category": "BOUNDARY",
         "description": "Division by zero returns 0 and prints error message without crashing",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "4\n5 0\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Error: Division by zero!",
@@ -308,13 +237,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_square_root_negative",
         "category": "BOUNDARY",
         "description": "Square root of negative number returns 0 and prints error message without crashing",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "6\n-4\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Error: Cannot calculate square root of negative number!",
@@ -325,13 +250,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_division_by_zero_result_is_zero",
         "category": "BOUNDARY",
         "description": "Division by zero should show Result: 0 (not crash or show infinity)",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "4\n10 0\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 0",
@@ -342,13 +263,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_square_root_negative_result_is_zero",
         "category": "BOUNDARY",
         "description": "Square root of negative number should show Result: 0 (not NaN or crash)",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "6\n-9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 0",
@@ -359,13 +276,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_large_numbers_addition",
         "category": "BOUNDARY",
         "description": "Addition with very large numbers: 1e15 + 1e15 = 2e15",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n1000000000000000 1000000000000000\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result:",
@@ -376,13 +289,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_zero_operands_addition",
         "category": "BOUNDARY",
         "description": "Addition with zero operands: 0 + 0 = 0",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n0 0\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 0",
@@ -393,13 +302,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_negative_numbers_subtraction",
         "category": "BOUNDARY",
         "description": "Subtraction with negative numbers: (-5) - (-3) = -2",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "2\n-5 -3\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: -2",
@@ -410,13 +315,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_power_zero_exponent",
         "category": "BOUNDARY",
         "description": "Any number to the power of 0 equals 1: 5^0 = 1",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "5\n5 0\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 1",
@@ -427,13 +328,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_power_negative_exponent",
         "category": "BOUNDARY",
         "description": "Power with negative exponent: 2^-1 = 0.5",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "5\n2 -1\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 0.5",
@@ -444,13 +341,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_square_root_zero",
         "category": "BOUNDARY",
         "description": "Square root of zero equals zero: sqrt(0) = 0",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "6\n0\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 0",
@@ -461,13 +354,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_mean_single_number",
         "category": "BOUNDARY",
         "description": "Mean of a single number [42] equals that number: 42",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "7\n1\n42\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Mean: 42",
@@ -478,13 +367,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_division_by_zero_not_in_history",
         "category": "BOUNDARY",
         "description": "Division by zero should not add a result to history (history size stays 0)",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "4\n5 0\n9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Calculation History:",
@@ -492,65 +377,12 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "timeout_seconds": 10
     },
     {
-        "name": "test_unknown_flag",
-        "category": "INVALID_ARGS",
-        "description": "Passing an unknown flag should print usage and exit with non-zero code",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--unknown"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": "Usage:",
-        "expected_stderr": null,
-        "timeout_seconds": 10
-    },
-    {
-        "name": "test_invalid_flag_combination",
-        "category": "INVALID_ARGS",
-        "description": "Passing unrecognized extra arguments should print usage and exit with non-zero code",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator",
-            "--extra-flag"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": "Usage:",
-        "expected_stderr": null,
-        "timeout_seconds": 10
-    },
-    {
-        "name": "test_analyzer_stub",
-        "category": "INVALID_ARGS",
-        "description": "Passing --analyzer in milestone 1 should indicate it is not yet implemented",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": "not yet implemented",
-        "expected_stderr": null,
-        "timeout_seconds": 10
-    },
-    {
         "name": "test_invalid_menu_choice",
         "category": "INVALID_OPTIONS",
         "description": "Entering an invalid menu choice (99) should print invalid choice message and continue",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "99\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Invalid choice",
@@ -561,13 +393,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_negative_menu_choice",
         "category": "INVALID_OPTIONS",
         "description": "Entering a negative menu choice (-1) should print invalid choice message and continue",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "-1\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Invalid choice",
@@ -578,13 +406,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_piped_calculator_full_session",
         "category": "PIPE_INPUT",
         "description": "Pipe a full calculator session: add 2+3, multiply 4*5, show history, exit",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n2 3\n3\n4 5\n9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 5",
@@ -595,13 +419,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_piped_all_arithmetic_operations",
         "category": "PIPE_INPUT",
         "description": "Pipe all basic arithmetic operations in sequence: add, subtract, multiply, divide, then exit",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n10 5\n2\n10 5\n3\n10 5\n4\n10 5\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "Result: 15",
@@ -612,13 +432,9 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_piped_calculator_with_history_clear",
         "category": "PIPE_INPUT",
         "description": "Pipe operations including clear history: add 1+1, clear history, add 2+2, show history, exit",
-        "command": "java",
+        "command": "./calculator",
         "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--calculator"
-        ],
+        "args": [],
         "stdin": "1\n1 1\n10\n1\n2 2\n9\n0\n",
         "expected_exit_code": 0,
         "expected_stdout": "History cleared.",
@@ -628,7 +444,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
 ]'''))
 
 # CLI binary/entry point
-CLI_COMMAND = "echo success"
+CLI_COMMAND = "./calculator"
 
 # Working directory for CLI execution
 WORKING_DIR = "."

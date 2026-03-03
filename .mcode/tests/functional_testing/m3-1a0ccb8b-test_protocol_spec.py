@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests commands and captures outputs (no expected_stdout/stderr)
 2. DST Contract Validation: Tests commands and validates outputs match expected
 
-Generated at: 2026-03-03T09:30:41.375014+00:00
+Generated at: 2026-03-03T09:39:04.837976+00:00
 Project: simple-test-2
 Milestone: 3
 """
@@ -52,1103 +52,289 @@ def resolve_env_placeholders(obj: Any) -> Any:
 # that the agent may have substituted for detected secrets.
 TEST_CASES = resolve_env_placeholders(json.loads(r'''[
     {
-        "name": "test_help_output",
-        "category": "HELP_OUTPUT",
-        "description": "Verify --help prints usage information and exits successfully",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--help"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "Usage:",
-        "expected_stderr": null,
-        "timeout_seconds": 15
-    },
-    {
-        "name": "test_analyzer_basic_csv_input",
+        "name": "test_basic_execution",
         "category": "HAPPY_PATH",
-        "description": "Run analyzer with a valid CSV file using default output path",
-        "command": "java",
+        "description": "Verify data_analyzer.py runs successfully and prints completion message",
+        "command": "python3",
         "subcommand": "",
         "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv"
+            "data_analyzer.py"
         ],
         "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
+        "expected_stdout": "Data analysis complete!",
         "expected_stderr": null,
         "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.5\n2024-01-02T00:00:00,20.3\n2024-01-03T00:00:00,15.7\n2024-01-04T00:00:00,25.1\n2024-01-05T00:00:00,18.9\n2024-01-06T00:00:00,22.4\n2024-01-07T00:00:00,30.0\n2024-01-08T00:00:00,12.6\n2024-01-09T00:00:00,28.8\n2024-01-10T00:00:00,16.2"
-            }
-        },
         "cleanup": {
             "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
+                "analysis_report.json"
             ]
         }
     },
     {
-        "name": "test_analyzer_custom_output_path",
+        "name": "test_summary_header",
         "category": "HAPPY_PATH",
-        "description": "Run analyzer with a custom JSON output file path",
-        "command": "java",
+        "description": "Verify output contains DATA ANALYZER SUMMARY section header",
+        "command": "python3",
         "subcommand": "",
         "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--output",
-            "custom_report.json"
+            "data_analyzer.py"
         ],
         "expected_exit_code": 0,
-        "expected_stdout": "custom_report.json",
+        "expected_stdout": "DATA ANALYZER SUMMARY",
         "expected_stderr": null,
         "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.5\n2024-01-02T00:00:00,20.3\n2024-01-03T00:00:00,15.7\n2024-01-04T00:00:00,25.1\n2024-01-05T00:00:00,18.9"
-            }
-        },
         "cleanup": {
             "delete_files": [
-                "test_input.csv",
-                "custom_report.json"
+                "analysis_report.json"
             ]
         }
     },
     {
-        "name": "test_analyzer_short_output_flag",
+        "name": "test_mean_statistic_displayed",
         "category": "HAPPY_PATH",
-        "description": "Run analyzer using short -o flag for output path",
-        "command": "java",
+        "description": "Verify output includes Mean statistic for datasets",
+        "command": "python3",
         "subcommand": "",
         "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "-o",
-            "short_report.json"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "short_report.json",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0\n2024-01-04T00:00:00,40.0\n2024-01-05T00:00:00,50.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "short_report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_with_log_transform",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer with log transformation applied to dataset values",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--transform",
-            "log"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0\n2024-01-04T00:00:00,40.0\n2024-01-05T00:00:00,50.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_with_sqrt_transform",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer with sqrt transformation applied to dataset values",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--transform",
-            "sqrt"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,4.0\n2024-01-02T00:00:00,9.0\n2024-01-03T00:00:00,16.0\n2024-01-04T00:00:00,25.0\n2024-01-05T00:00:00,36.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_with_square_transform",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer with square transformation applied to dataset values",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--transform",
-            "square"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,2.0\n2024-01-02T00:00:00,3.0\n2024-01-03T00:00:00,4.0\n2024-01-04T00:00:00,5.0\n2024-01-05T00:00:00,6.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_with_normalize_transform",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer with normalize (z-score) transformation applied to dataset values",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--transform",
-            "normalize"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0\n2024-01-04T00:00:00,40.0\n2024-01-05T00:00:00,50.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_compare_two_datasets",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer comparing two CSV datasets with Pearson correlation and side-by-side stats",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "dataset1.csv",
-            "--compare",
-            "dataset2.csv",
-            "--output",
-            "comparison_report.json"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "comparison_report.json",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_files": [
-                {
-                    "path": "dataset1.csv",
-                    "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0\n2024-01-04T00:00:00,40.0\n2024-01-05T00:00:00,50.0\n2024-01-06T00:00:00,60.0\n2024-01-07T00:00:00,70.0\n2024-01-08T00:00:00,80.0\n2024-01-09T00:00:00,90.0\n2024-01-10T00:00:00,100.0"
-                },
-                {
-                    "path": "dataset2.csv",
-                    "content": "timestamp,value\n2024-01-01T00:00:00,15.0\n2024-01-02T00:00:00,25.0\n2024-01-03T00:00:00,35.0\n2024-01-04T00:00:00,45.0\n2024-01-05T00:00:00,55.0\n2024-01-06T00:00:00,65.0\n2024-01-07T00:00:00,75.0\n2024-01-08T00:00:00,85.0\n2024-01-09T00:00:00,95.0\n2024-01-10T00:00:00,105.0"
-                }
-            ]
-        },
-        "cleanup": {
-            "delete_files": [
-                "dataset1.csv",
-                "dataset2.csv",
-                "comparison_report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_custom_value_column",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer with a custom value column name specified via --value-column",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--value-column",
-            "price"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "date,price,category\n2024-01-01,105.50,A\n2024-01-02,203.25,B\n2024-01-03,157.00,A\n2024-01-04,251.75,B\n2024-01-05,189.00,A"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_custom_timestamp_column",
-        "category": "HAPPY_PATH",
-        "description": "Run analyzer with explicit timestamp column name",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--value-column",
-            "temperature",
-            "--timestamp-column",
-            "recorded_at"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "recorded_at,temperature,location\n2024-06-01T08:00:00,22.5,StationA\n2024-06-02T08:00:00,24.1,StationA\n2024-06-03T08:00:00,19.8,StationA\n2024-06-04T08:00:00,26.3,StationA\n2024-06-05T08:00:00,21.7,StationA"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_full_pipeline",
-        "category": "HAPPY_PATH",
-        "description": "Run full analysis pipeline: input CSV, transform, custom output, and compare",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "main_data.csv",
-            "--compare",
-            "compare_data.csv",
-            "--transform",
-            "normalize",
-            "--output",
-            "full_report.json"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "full_report.json",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_files": [
-                {
-                    "path": "main_data.csv",
-                    "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,15.0\n2024-01-03T00:00:00,20.0\n2024-01-04T00:00:00,25.0\n2024-01-05T00:00:00,30.0\n2024-01-06T00:00:00,35.0\n2024-01-07T00:00:00,40.0\n2024-01-08T00:00:00,45.0\n2024-01-09T00:00:00,50.0\n2024-01-10T00:00:00,55.0"
-                },
-                {
-                    "path": "compare_data.csv",
-                    "content": "timestamp,value\n2024-01-01T00:00:00,12.0\n2024-01-02T00:00:00,18.0\n2024-01-03T00:00:00,22.0\n2024-01-04T00:00:00,28.0\n2024-01-05T00:00:00,32.0\n2024-01-06T00:00:00,38.0\n2024-01-07T00:00:00,42.0\n2024-01-08T00:00:00,48.0\n2024-01-09T00:00:00,52.0\n2024-01-10T00:00:00,58.0"
-                }
-            ]
-        },
-        "cleanup": {
-            "delete_files": [
-                "main_data.csv",
-                "compare_data.csv",
-                "full_report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_console_summary_output",
-        "category": "HAPPY_PATH",
-        "description": "Verify analyzer prints dataset summary statistics to console including count, mean, median, std dev, and outliers",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv"
+            "data_analyzer.py"
         ],
         "expected_exit_code": 0,
         "expected_stdout": "Mean:",
         "expected_stderr": null,
         "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0\n2024-01-04T00:00:00,40.0\n2024-01-05T00:00:00,50.0"
-            }
-        },
         "cleanup": {
             "delete_files": [
-                "test_input.csv",
-                "analysis-report.json"
+                "analysis_report.json"
             ]
         }
     },
     {
-        "name": "test_analyzer_missing_input_flag",
-        "category": "INVALID_ARGS",
-        "description": "Running --analyzer without --input should fail with missing argument error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer"
-        ],
-        "expected_exit_code": 2,
-        "expected_stdout": null,
-        "expected_stderr": "input",
-        "timeout_seconds": 15
-    },
-    {
-        "name": "test_analyzer_input_flag_no_value",
-        "category": "INVALID_ARGS",
-        "description": "Running --analyzer --input without a file path value should fail",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input"
-        ],
-        "expected_exit_code": 2,
-        "expected_stdout": null,
-        "expected_stderr": "input",
-        "timeout_seconds": 15
-    },
-    {
-        "name": "test_analyzer_nonexistent_input_file",
-        "category": "INVALID_ARGS",
-        "description": "Running analyzer with a non-existent CSV file should fail with file not found error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "nonexistent_file.csv"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": null,
-        "expected_stderr": "not found",
-        "timeout_seconds": 15
-    },
-    {
-        "name": "test_analyzer_invalid_transform_type",
-        "category": "INVALID_ARGS",
-        "description": "Running analyzer with an unrecognized --transform value should fail",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--transform",
-            "invalid_transform"
-        ],
-        "expected_exit_code": 2,
-        "expected_stdout": null,
-        "expected_stderr": "transform",
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_compare_nonexistent_file",
-        "category": "INVALID_ARGS",
-        "description": "Running --compare with a non-existent second CSV should fail with file not found error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--compare",
-            "missing_compare.csv"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": null,
-        "expected_stderr": "not found",
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_output_flag_no_value",
-        "category": "INVALID_ARGS",
-        "description": "Running --output without a path value should fail",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--output"
-        ],
-        "expected_exit_code": 2,
-        "expected_stdout": null,
-        "expected_stderr": "output",
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_unknown_option",
-        "category": "INVALID_OPTIONS",
-        "description": "Running analyzer with an unknown flag should fail with unrecognized option error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--unknown-option"
-        ],
-        "expected_exit_code": 2,
-        "expected_stdout": null,
-        "expected_stderr": "unknown",
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "test_input.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_no_args_interactive_mode",
-        "category": "INVALID_OPTIONS",
-        "description": "Running with no arguments should enter interactive mode or print a menu (non-batch; tested only for non-crash behavior)",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar"
-        ],
-        "stdin": "3\n",
-        "expected_exit_code": 0,
-        "expected_stdout": null,
-        "expected_stderr": null,
-        "timeout_seconds": 15
-    },
-    {
-        "name": "test_analyzer_empty_csv_headers_only",
-        "category": "BOUNDARY",
-        "description": "CSV file with only headers and no data rows should be handled gracefully",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "empty_data.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": null,
-        "expected_stderr": null,
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "empty_data.csv",
-                "content": "timestamp,value"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "empty_data.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_single_datapoint",
-        "category": "BOUNDARY",
-        "description": "CSV with a single data row should compute basic statistics without crashing (std dev = 0)",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "single_row.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "single_row.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,42.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "single_row.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_large_numeric_values",
-        "category": "BOUNDARY",
-        "description": "CSV with very large numeric values should be handled without overflow",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "large_values.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "large_values.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,999999999.99\n2024-01-02T00:00:00,888888888.88\n2024-01-03T00:00:00,777777777.77\n2024-01-04T00:00:00,666666666.66\n2024-01-05T00:00:00,555555555.55"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "large_values.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_negative_values",
-        "category": "BOUNDARY",
-        "description": "CSV with negative numeric values should be handled correctly",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "negative_values.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "negative_values.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,-50.0\n2024-01-02T00:00:00,-25.0\n2024-01-03T00:00:00,0.0\n2024-01-04T00:00:00,25.0\n2024-01-05T00:00:00,50.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "negative_values.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_identical_values",
-        "category": "BOUNDARY",
-        "description": "CSV where all values are identical (std dev = 0, normalize should be skipped or handled)",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "identical_values.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "identical_values.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,42.0\n2024-01-02T00:00:00,42.0\n2024-01-03T00:00:00,42.0\n2024-01-04T00:00:00,42.0\n2024-01-05T00:00:00,42.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "identical_values.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_two_datapoints",
-        "category": "BOUNDARY",
-        "description": "CSV with exactly two data rows (minimum for std dev computation)",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "two_rows.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "two_rows.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "two_rows.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_csv_with_timestamps",
-        "category": "FILE_INPUT",
-        "description": "CSV with ISO-8601 timestamps in a dedicated column should be parsed and used for time series analysis",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "timestamped.csv",
-            "--timestamp-column",
-            "ts"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "timestamped.csv",
-                "content": "ts,value,label\n2024-01-01T08:00:00,10.5,morning\n2024-01-02T08:00:00,12.3,morning\n2024-01-03T08:00:00,11.7,morning\n2024-01-04T08:00:00,14.1,morning\n2024-01-05T08:00:00,13.9,morning\n2024-01-06T08:00:00,15.4,morning\n2024-01-07T08:00:00,16.0,morning\n2024-01-08T08:00:00,14.6,morning\n2024-01-09T08:00:00,17.8,morning\n2024-01-10T08:00:00,18.2,morning"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "timestamped.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_csv_without_timestamp_column",
-        "category": "FILE_INPUT",
-        "description": "CSV without any timestamp column should still work with auto-generated timestamps",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "no_timestamps.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "no_timestamps.csv",
-                "content": "value\n10.0\n20.0\n30.0\n40.0\n50.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "no_timestamps.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_csv_missing_value_column",
-        "category": "FILE_INPUT",
-        "description": "CSV that does not contain the expected value column should fail with a column not found error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "wrong_columns.csv"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": null,
-        "expected_stderr": "Column",
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "wrong_columns.csv",
-                "content": "name,score,grade\nAlice,95,A\nBob,87,B\nCharlie,92,A"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "wrong_columns.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_csv_with_invalid_numeric_data",
-        "category": "FILE_INPUT",
-        "description": "CSV rows containing non-numeric values in the value column should produce an error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "bad_numeric.csv"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": null,
-        "expected_stderr": "Invalid data",
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "bad_numeric.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.5\n2024-01-02T00:00:00,not_a_number\n2024-01-03T00:00:00,15.7"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "bad_numeric.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_csv_with_malformed_timestamps",
-        "category": "FILE_INPUT",
-        "description": "CSV with malformed timestamp values should fall back to current time rather than crashing",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "bad_timestamps.csv",
-            "--timestamp-column",
-            "timestamp"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "bad_timestamps.csv",
-                "content": "timestamp,value\nnot-a-date,10.5\n2024-01-02T00:00:00,20.3\nalso-not-valid,15.7\n2024-01-04T00:00:00,25.1\n12/31/2024,18.9"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "bad_timestamps.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_csv_with_extra_columns",
-        "category": "FILE_INPUT",
-        "description": "CSV with extra columns beyond value and timestamp should be ignored without error",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "extra_cols.csv"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "extra_cols.csv",
-                "content": "timestamp,value,label,category,notes\n2024-01-01T00:00:00,10.5,alpha,A,first\n2024-01-02T00:00:00,20.3,beta,B,second\n2024-01-03T00:00:00,15.7,gamma,A,third\n2024-01-04T00:00:00,25.1,delta,B,fourth\n2024-01-05T00:00:00,18.9,epsilon,A,fifth"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "extra_cols.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_log_transform_with_negative_values",
-        "category": "BOUNDARY",
-        "description": "Log transform with negative/zero values should skip those values rather than crash",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "mixed_sign.csv",
-            "--transform",
-            "log"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "mixed_sign.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,-5.0\n2024-01-02T00:00:00,0.0\n2024-01-03T00:00:00,10.0\n2024-01-04T00:00:00,20.0\n2024-01-05T00:00:00,30.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "mixed_sign.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_sqrt_transform_with_negative_values",
-        "category": "BOUNDARY",
-        "description": "Sqrt transform with negative values should skip those values rather than crash",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "mixed_sign.csv",
-            "--transform",
-            "sqrt"
-        ],
-        "expected_exit_code": 0,
-        "expected_stdout": "analysis report exported",
-        "expected_stderr": null,
-        "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "mixed_sign.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,-5.0\n2024-01-02T00:00:00,0.0\n2024-01-03T00:00:00,10.0\n2024-01-04T00:00:00,20.0\n2024-01-05T00:00:00,30.0"
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "mixed_sign.csv",
-                "analysis-report.json"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_empty_file",
-        "category": "BOUNDARY",
-        "description": "Completely empty file (no headers) should fail gracefully",
-        "command": "java",
-        "subcommand": "",
-        "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "empty_file.csv"
-        ],
-        "expected_exit_code": 1,
-        "expected_stdout": null,
-        "expected_stderr": null,
-        "timeout_seconds": 15,
-        "setup": {
-            "create_file": {
-                "path": "empty_file.csv",
-                "content": ""
-            }
-        },
-        "cleanup": {
-            "delete_files": [
-                "empty_file.csv"
-            ]
-        }
-    },
-    {
-        "name": "test_analyzer_json_report_structure",
+        "name": "test_std_dev_displayed",
         "category": "HAPPY_PATH",
-        "description": "Verify that the exported JSON report contains the expected top-level keys: timestamp, datasets, analysis_history",
-        "command": "java",
+        "description": "Verify output includes Std Dev statistic for datasets",
+        "command": "python3",
         "subcommand": "",
         "args": [
-            "-jar",
-            "target/simple-test-2-1.0.0-SNAPSHOT.jar",
-            "--analyzer",
-            "--input",
-            "test_input.csv",
-            "--output",
-            "structure_test.json"
+            "data_analyzer.py"
         ],
         "expected_exit_code": 0,
-        "expected_stdout": "structure_test.json",
+        "expected_stdout": "Std Dev:",
         "expected_stderr": null,
         "timeout_seconds": 30,
-        "setup": {
-            "create_file": {
-                "path": "test_input.csv",
-                "content": "timestamp,value\n2024-01-01T00:00:00,10.0\n2024-01-02T00:00:00,20.0\n2024-01-03T00:00:00,30.0\n2024-01-04T00:00:00,40.0\n2024-01-05T00:00:00,50.0\n2024-01-06T00:00:00,60.0\n2024-01-07T00:00:00,70.0\n2024-01-08T00:00:00,80.0\n2024-01-09T00:00:00,90.0\n2024-01-10T00:00:00,100.0"
-            }
-        },
         "cleanup": {
             "delete_files": [
-                "test_input.csv",
-                "structure_test.json"
+                "analysis_report.json"
             ]
         }
+    },
+    {
+        "name": "test_outlier_count_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify output includes outlier detection count for datasets",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Outliers:",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_report_export_message",
+        "category": "HAPPY_PATH",
+        "description": "Verify output confirms JSON report was exported to analysis_report.json",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Analysis report exported to analysis_report.json",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_comprehensive_analysis_header",
+        "category": "HAPPY_PATH",
+        "description": "Verify comprehensive analysis demonstration section runs",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "COMPREHENSIVE DATA ANALYSIS DEMONSTRATION",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_skewness_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify advanced statistics include skewness calculation",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Skewness:",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_kurtosis_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify advanced statistics include kurtosis calculation",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Kurtosis:",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_trend_detection_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify time series trend detection is performed and displayed",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Trend:",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_histogram_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify text-based histogram visualization is created",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Histogram:",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_box_plot_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify ASCII box plot visualization is created",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Box Plot:",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_normal_distribution_dataset",
+        "category": "HAPPY_PATH",
+        "description": "Verify Normal Distribution sample dataset is generated and analyzed",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "Normal Distribution",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_moving_average_displayed",
+        "category": "HAPPY_PATH",
+        "description": "Verify moving average calculation is performed and displayed",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "data_analyzer.py"
+        ],
+        "expected_exit_code": 0,
+        "expected_stdout": "moving average",
+        "expected_stderr": null,
+        "timeout_seconds": 30,
+        "cleanup": {
+            "delete_files": [
+                "analysis_report.json"
+            ]
+        }
+    },
+    {
+        "name": "test_nonexistent_script_fails",
+        "category": "INVALID_ARGS",
+        "description": "Running python3 on a non-existent script should fail with exit code 2",
+        "command": "python3",
+        "subcommand": "",
+        "args": [
+            "nonexistent_script.py"
+        ],
+        "expected_exit_code": 2,
+        "expected_stdout": null,
+        "expected_stderr": "No such file or directory",
+        "timeout_seconds": 10
     }
 ]'''))
 
 # CLI binary/entry point
-CLI_COMMAND = "echo success"
+CLI_COMMAND = "python3"
 
 # Working directory for CLI execution
 WORKING_DIR = "."
